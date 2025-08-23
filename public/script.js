@@ -21,35 +21,9 @@ showChat.addEventListener("click", () => {
 
 const user = prompt("Enter your name");
 
-var peer = new Peer({
-  //host: '127.0.0.1',
-  //port: 3030,
-  //path: '/peerjs',
+const peer = new Peer({
   debug: 4,
   secure: true
-  //config: {
-  //  'iceServers': [
-  //    {url: 'stun:stun01.sipphone.com'},
-  //    {url: 'stun:stun.ekiga.net'},
-  //    {url: 'stun:stunserver.org'},
-  //    {url: 'stun:stun.softjoys.com'},
-  //    {url: 'stun:stun.voiparound.com'},
-  //    {url: 'stun:stun.voipbuster.com'},
-  //    {url: 'stun:stun.voipstunt.com'},
-  //    {url: 'stun:stun.voxgratia.org'},
-  //    {url: 'stun:stun.xten.com'},
-  //    {
-  //      url: 'turn:192.158.29.39:3478?transport=udp',
-  //      credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-  //      username: '28224511:1379330808'
-  //    },
-  //    {
-  //      url: 'turn:192.158.29.39:3478?transport=tcp',
-  //      credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-  //      username: '28224511:1379330808'
-  //    }
-  //  ]
-  //}
 });
 
 let myVideoStream;
@@ -63,10 +37,11 @@ navigator.mediaDevices
     addVideoStream(myVideo, user, stream);
 
     peer.on("call", (call) => {
-      console.log('someone call me');
+      console.log('someone call me', call);
       call.answer(stream);
       const video = document.createElement("video");
       call.on("stream", (userVideoStream) => {
+        console.log('userVideoStream', userVideoStream);
         addVideoStream(video, 'stream-user', userVideoStream);
       });
     });
@@ -77,7 +52,7 @@ navigator.mediaDevices
   });
 
 const connectToNewUser = (userId, userName, stream) => {
-  console.log('I call someone' + userId);
+  console.log('I call someone', userId, userName);
   const call = peer.call(userId, stream);
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
@@ -91,34 +66,39 @@ peer.on("open", (id) => {
 });
 
 const addVideoStream = (video, userName, stream) => {
-  video.srcObject = stream;
-  const videoBlock = document.createElement("div");
-  const videoData = document.createElement("div");
-  videoBlock.className = "video-block";
-  videoData.className = "video-data";
-  videoData.innerText = userName;
-  videoBlock.append(video);
-  videoBlock.append(videoData);
+  let added = false;
 
   video.addEventListener("loadedmetadata", (e) => {
     console.log('loadedmetadata', e);
-    video.play();
-    videoGrid.append(videoBlock);
+
+    if (!added) {
+      added = true;
+      const videoBlock = document.createElement("div");
+      const videoData = document.createElement("div");
+      video.srcObject = stream;
+      videoBlock.className = "video-block";
+      videoData.className = "video-data";
+      videoData.innerText = userName;
+      videoBlock.append(video);
+      videoBlock.append(videoData);
+      video.play();
+      videoGrid.append(videoBlock);
+    }
   });
 
   video.addEventListener("emptied", (e) => {
     console.log('emptied', e);
-    videoBlock.remove()
+    video.parentElement.remove();
   });
 
   video.addEventListener("ended", (e) => {
     console.log('ended', e);
-    videoBlock.remove()
+    video.parentElement.remove();
   });
 
   video.addEventListener("error", (e) => {
     console.log('error', e);
-    videoBlock.remove()
+    video.parentElement.remove();
   });
 };
 
@@ -146,6 +126,8 @@ const muteButton = document.querySelector("#muteButton");
 const stopVideo = document.querySelector("#stopVideo");
 muteButton.addEventListener("click", () => {
   const enabled = myVideoStream.getAudioTracks()[0].enabled;
+  let html = "";
+
   if (enabled) {
     myVideoStream.getAudioTracks()[0].enabled = false;
     html = `<i class="fas fa-microphone-slash"></i>`;
@@ -161,6 +143,8 @@ muteButton.addEventListener("click", () => {
 
 stopVideo.addEventListener("click", () => {
   const enabled = myVideoStream.getVideoTracks()[0].enabled;
+  let html = "";
+
   if (enabled) {
     myVideoStream.getVideoTracks()[0].enabled = false;
     html = `<i class="fas fa-video-slash"></i>`;

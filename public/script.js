@@ -115,9 +115,9 @@ const addVideoStream = (videoBlock) => {
   }
 };
 
-let text = document.querySelector("#chat_message");
-let send = document.getElementById("send");
-let messages = document.querySelector(".messages");
+const text = document.getElementById("chat_message");
+const send = document.getElementById("send");
+const messages = document.querySelector(".messages");
 
 send.addEventListener("click", (e) => {
   if (text.value.length !== 0) {

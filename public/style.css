@@ -186,6 +186,10 @@ video {
     color: var(--main-light);
 }
 
+.video-data:only-child {
+    display: none;
+}
+
 @media (max-width: 700px) {
     .main__right {
         display: none;

@@ -60,28 +60,28 @@ navigator.mediaDevices
   })
   .then((stream) => {
     myVideoStream = stream;
-    addVideoStream(myVideo, stream);
+    addVideoStream(myVideo, user, stream);
 
     peer.on("call", (call) => {
       console.log('someone call me');
       call.answer(stream);
       const video = document.createElement("video");
       call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
+        addVideoStream(video, 'stream-user', userVideoStream);
       });
     });
 
-    socket.on("user-connected", (userId) => {
-      connectToNewUser(userId, stream);
+    socket.on("userConnected", (userId, userName) => {
+      connectToNewUser(userId, userName, stream);
     });
   });
 
-const connectToNewUser = (userId, stream) => {
+const connectToNewUser = (userId, userName, stream) => {
   console.log('I call someone' + userId);
   const call = peer.call(userId, stream);
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userVideoStream);
+    addVideoStream(video, userName, userVideoStream);
   });
 };
 
@@ -90,30 +90,34 @@ peer.on("open", (id) => {
   socket.emit("join-room", ROOM_ID, id, user);
 });
 
-const addVideoStream = (video, stream) => {
+const addVideoStream = (video, userName, stream) => {
   video.srcObject = stream;
   const videoBlock = document.createElement("div");
   const videoData = document.createElement("div");
   videoBlock.className = "video-block";
   videoData.className = "video-data";
-  videoData.innerText = user;
+  videoData.innerText = userName;
   videoBlock.append(video);
   videoBlock.append(videoData);
 
-  video.addEventListener("loadedmetadata", () => {
+  video.addEventListener("loadedmetadata", (e) => {
+    console.log('loadedmetadata', e);
     video.play();
     videoGrid.append(videoBlock);
   });
 
-  video.addEventListener("emptied", () => {
+  video.addEventListener("emptied", (e) => {
+    console.log('emptied', e);
     videoBlock.remove()
   });
 
-  video.addEventListener("ended", () => {
+  video.addEventListener("ended", (e) => {
+    console.log('ended', e);
     videoBlock.remove()
   });
 
-  video.addEventListener("error", () => {
+  video.addEventListener("error", (e) => {
+    console.log('error', e);
     videoBlock.remove()
   });
 };

@@ -26,7 +26,7 @@ var peer = new Peer({
   //port: 3030,
   //path: '/peerjs',
   debug: 4,
-  secure: true,
+  secure: true
   //config: {
   //  'iceServers': [
   //    {url: 'stun:stun01.sipphone.com'},
@@ -92,16 +92,29 @@ peer.on("open", (id) => {
 
 const addVideoStream = (video, stream) => {
   video.srcObject = stream;
+  const videoBlock = document.createElement("div");
+  const videoData = document.createElement("div");
+  videoBlock.className = "video-block";
+  videoData.className = "video-data";
+  videoData.innerText = user;
+  videoBlock.append(video);
+  videoBlock.append(videoData);
+
   video.addEventListener("loadedmetadata", () => {
     video.play();
-    const videoBlock = document.createElement("div");
-    const videoData = document.createElement("div");
-    videoBlock.className = "video-block";
-    videoData.className = "video-data";
-    videoData.innerText = user;
-    videoBlock.append(video);
-    videoBlock.append(videoData);
     videoGrid.append(videoBlock);
+  });
+
+  video.addEventListener("emptied", () => {
+    videoBlock.remove()
+  });
+
+  video.addEventListener("ended", () => {
+    videoBlock.remove()
+  });
+
+  video.addEventListener("error", () => {
+    videoBlock.remove()
   });
 };
 

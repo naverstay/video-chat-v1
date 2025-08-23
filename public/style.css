@@ -74,6 +74,7 @@ video {
 }
 
 .options__button {
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -169,6 +170,11 @@ video {
   top: 17px;
   left: 28px;
   color: #fff;
+}
+
+.video-data {
+  text-align: center;
+  color: var(--main-light);
 }
 
 @media (max-width: 700px) {

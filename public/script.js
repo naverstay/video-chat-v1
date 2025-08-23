@@ -22,41 +22,41 @@ showChat.addEventListener("click", () => {
 const user = prompt("Enter your name");
 
 var peer = new Peer({
-  host: '127.0.0.1',
-  port: 3030,
-  path: '/peerjs',
+  //host: '127.0.0.1',
+  //port: 3030,
+  //path: '/peerjs',
   debug: 4,
   secure: true,
-  config: {
-    'iceServers': [
-      { url: 'stun:stun01.sipphone.com' },
-      { url: 'stun:stun.ekiga.net' },
-      { url: 'stun:stunserver.org' },
-      { url: 'stun:stun.softjoys.com' },
-      { url: 'stun:stun.voiparound.com' },
-      { url: 'stun:stun.voipbuster.com' },
-      { url: 'stun:stun.voipstunt.com' },
-      { url: 'stun:stun.voxgratia.org' },
-      { url: 'stun:stun.xten.com' },
-      {
-        url: 'turn:192.158.29.39:3478?transport=udp',
-        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-        username: '28224511:1379330808'
-      },
-      {
-        url: 'turn:192.158.29.39:3478?transport=tcp',
-        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-        username: '28224511:1379330808'
-      }
-    ]
-  },
+  //config: {
+  //  'iceServers': [
+  //    {url: 'stun:stun01.sipphone.com'},
+  //    {url: 'stun:stun.ekiga.net'},
+  //    {url: 'stun:stunserver.org'},
+  //    {url: 'stun:stun.softjoys.com'},
+  //    {url: 'stun:stun.voiparound.com'},
+  //    {url: 'stun:stun.voipbuster.com'},
+  //    {url: 'stun:stun.voipstunt.com'},
+  //    {url: 'stun:stun.voxgratia.org'},
+  //    {url: 'stun:stun.xten.com'},
+  //    {
+  //      url: 'turn:192.158.29.39:3478?transport=udp',
+  //      credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+  //      username: '28224511:1379330808'
+  //    },
+  //    {
+  //      url: 'turn:192.158.29.39:3478?transport=tcp',
+  //      credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+  //      username: '28224511:1379330808'
+  //    }
+  //  ]
+  //}
 });
 
 let myVideoStream;
 navigator.mediaDevices
   .getUserMedia({
     audio: true,
-    video: true,
+    video: true
   })
   .then((stream) => {
     myVideoStream = stream;
@@ -94,7 +94,14 @@ const addVideoStream = (video, stream) => {
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
     video.play();
-    videoGrid.append(video);
+    const videoBlock = document.createElement("div");
+    const videoData = document.createElement("div");
+    videoBlock.className = "video-block";
+    videoData.className = "video-data";
+    videoData.innerText = user;
+    videoBlock.append(video);
+    videoBlock.append(videoData);
+    videoGrid.append(videoBlock);
   });
 };
 
@@ -112,6 +119,7 @@ send.addEventListener("click", (e) => {
 text.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && text.value.length !== 0) {
     socket.emit("message", text.value);
+    console.log('send message', text.value);
     text.value = "";
   }
 });

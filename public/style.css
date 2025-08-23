@@ -52,7 +52,7 @@
 video {
     height: 300px;
     border-radius: 1rem;
-    margin: 0.5rem;
+    margin: 0 0 0.5rem;
     width: 400px;
     object-fit: cover;
     transform: rotateY(180deg);
@@ -112,10 +112,14 @@ video {
 }
 
 .main__message_container {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
     padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #242f41;
 }
 
 .main__message_container > input {

@@ -20,6 +20,7 @@ showChat.addEventListener("click", () => {
 });
 
 const user = prompt("Enter your name");
+const users = [];
 
 const peer = new Peer({
   debug: 4,
@@ -42,7 +43,11 @@ navigator.mediaDevices
       const video = document.createElement("video");
       call.on("stream", (userVideoStream) => {
         console.log('userVideoStream', userVideoStream);
-        addVideoStream(video, 'stream-user', userVideoStream);
+
+        if (!users.contains(userVideoStream.id)) {
+          users.push(userVideoStream.id)
+          addVideoStream(video, 'stream-user', userVideoStream);
+        }
       });
     });
 
@@ -88,17 +93,17 @@ const addVideoStream = (video, userName, stream) => {
 
   video.addEventListener("emptied", (e) => {
     console.log('emptied', e);
-    videoBlock.remove()
+    videoBlock.remove();
   });
 
   video.addEventListener("ended", (e) => {
     console.log('ended', e);
-    videoBlock.remove()
+    videoBlock.remove();
   });
 
   video.addEventListener("error", (e) => {
     console.log('error', e);
-    videoBlock.remove()
+    videoBlock.remove();
   });
 };
 

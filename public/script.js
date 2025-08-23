@@ -25,6 +25,8 @@ var peer = new Peer({
   host: '127.0.0.1',
   port: 3030,
   path: '/peerjs',
+  debug: 4,
+  secure: true,
   config: {
     'iceServers': [
       { url: 'stun:stun01.sipphone.com' },
@@ -48,8 +50,6 @@ var peer = new Peer({
       }
     ]
   },
-
-  debug: 3
 });
 
 let myVideoStream;

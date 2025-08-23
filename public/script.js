@@ -67,38 +67,38 @@ peer.on("open", (id) => {
 
 const addVideoStream = (video, userName, stream) => {
   let added = false;
+  const videoBlock = document.createElement("div");
+  const videoData = document.createElement("div");
+  video.srcObject = stream;
+  videoBlock.className = "video-block";
+  videoData.className = "video-data";
+  videoData.innerText = userName;
 
   video.addEventListener("loadedmetadata", (e) => {
     console.log('loadedmetadata', e);
 
     if (!added) {
       added = true;
-      const videoBlock = document.createElement("div");
-      const videoData = document.createElement("div");
-      video.srcObject = stream;
-      videoBlock.className = "video-block";
-      videoData.className = "video-data";
-      videoData.innerText = userName;
+      video.play();
       videoBlock.append(video);
       videoBlock.append(videoData);
-      video.play();
       videoGrid.append(videoBlock);
     }
   });
 
   video.addEventListener("emptied", (e) => {
     console.log('emptied', e);
-    video.parentElement.remove();
+    videoBlock.remove()
   });
 
   video.addEventListener("ended", (e) => {
     console.log('ended', e);
-    video.parentElement.remove();
+    videoBlock.remove()
   });
 
   video.addEventListener("error", (e) => {
     console.log('error', e);
-    video.parentElement.remove();
+    videoBlock.remove()
   });
 };
 

@@ -46,7 +46,7 @@ navigator.mediaDevices
 
         if (!users.contains(userVideoStream.id)) {
           users.push(userVideoStream.id)
-          addVideoStream(video, 'stream-user', userVideoStream);
+          addVideoStream(video, call?.metadata?.username ?? 'stream-user', userVideoStream);
         }
       });
     });
@@ -58,7 +58,11 @@ navigator.mediaDevices
 
 const connectToNewUser = (userId, userName, stream) => {
   console.log('I call someone', userId, userName);
-  const call = peer.call(userId, stream);
+  const call = peer.call(userId, stream, {
+    metadata: {
+      username: user
+    }
+  });
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
     addVideoStream(video, userName, userVideoStream);

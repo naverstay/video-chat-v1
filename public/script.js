@@ -35,7 +35,7 @@ navigator.mediaDevices
   })
   .then((stream) => {
     myVideoStream = stream;
-    addVideoStream(myVideo, user, stream);
+    addVideoStream(wrapVideoStream(myVideo, user, stream));
 
     peer.on("call", (call) => {
       console.log('someone call me', call);
@@ -46,7 +46,7 @@ navigator.mediaDevices
 
         if (!users.includes(userVideoStream.id)) {
           users.push(userVideoStream.id)
-          addVideoStream(video, call?.metadata?.username ?? 'stream-user', userVideoStream);
+          addVideoStream(wrapVideoStream(video, call?.metadata?.username ?? 'stream-user', userVideoStream));
         }
       });
     });
@@ -65,7 +65,7 @@ const connectToNewUser = (userId, userName, stream) => {
   });
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userName, userVideoStream);
+    addVideoStream(wrapVideoStream(video, userName, userVideoStream));
   });
 };
 
@@ -74,41 +74,45 @@ peer.on("open", (id) => {
   socket.emit("join-room", ROOM_ID, id, user);
 });
 
-const addVideoStream = (video, userName, stream) => {
-  let added = false;
+const wrapVideoStream = (video, userName, stream) => {
   const videoBlock = document.createElement("div");
   const videoData = document.createElement("div");
   video.srcObject = stream;
   videoBlock.className = "video-block";
   videoData.className = "video-data";
   videoData.innerText = userName;
+  videoBlock.append(video);
+  videoBlock.append(videoData);
 
-  video.addEventListener("loadedmetadata", (e) => {
-    console.log('loadedmetadata', e);
+  return videoBlock;
+};
 
-    if (!added) {
-      added = true;
+const addVideoStream = (videoBlock) => {
+  const video = videoBlock.getElementsByTagName('video')?.[0];
+
+  if (video) {
+    video.addEventListener("loadedmetadata", (e) => {
+      console.log('loadedmetadata', e);
+
       video.play();
-      videoBlock.append(video);
-      videoBlock.append(videoData);
       videoGrid.append(videoBlock);
-    }
-  });
+    });
 
-  video.addEventListener("emptied", (e) => {
-    console.log('emptied', e);
-    videoBlock.remove();
-  });
+    video.addEventListener("emptied", (e) => {
+      console.log('emptied', e);
+      video.remove();
+    });
 
-  video.addEventListener("ended", (e) => {
-    console.log('ended', e);
-    videoBlock.remove();
-  });
+    video.addEventListener("ended", (e) => {
+      console.log('ended', e);
+      video.remove();
+    });
 
-  video.addEventListener("error", (e) => {
-    console.log('error', e);
-    videoBlock.remove();
-  });
+    video.addEventListener("error", (e) => {
+      console.log('error', e);
+      video.remove();
+    });
+  }
 };
 
 let text = document.querySelector("#chat_message");

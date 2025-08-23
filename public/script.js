@@ -42,9 +42,9 @@ navigator.mediaDevices
       call.answer(stream);
       const video = document.createElement("video");
       call.on("stream", (userVideoStream) => {
-        console.log('userVideoStream', userVideoStream);
+        console.log('userVideoStream', userVideoStream, users);
 
-        if (!users.contains(userVideoStream.id)) {
+        if (!users.includes(userVideoStream.id)) {
           users.push(userVideoStream.id)
           addVideoStream(video, call?.metadata?.username ?? 'stream-user', userVideoStream);
         }

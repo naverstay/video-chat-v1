@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const {v4: uuidv4} = require("uuid");
 
 app.set("view engine", "ejs");
 
@@ -18,7 +17,7 @@ app.use("/peerjs", ExpressPeerServer(server, options));
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-    res.redirect(`/${uuidv4()}`);
+    res.redirect(`/${crypto.randomUUID()}`);
 });
 
 app.get("/:room", (req, res) => {
@@ -29,11 +28,15 @@ io.on("connection", (socket) => {
     socket.on("join-room", (roomId, userId, userName) => {
         socket.join(roomId);
         setTimeout(() => {
-            socket.to(roomId).emit("userConnected", userId, userName);
+            io.to(roomId).emit("userConnected", userId, userName);
         }, 1000);
 
+        socket.on("disconnect", () => {
+            io.to(roomId).emit("userDisconnected", userId, userName);
+        });
+
         socket.on("message", (message) => {
-            io.to(roomId).emit("createMessage", message, userName);
+            io.to(roomId).emit("createMessage", message, userName, userId);
         });
     });
 });

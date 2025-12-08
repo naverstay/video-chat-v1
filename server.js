@@ -1,6 +1,15 @@
 const express = require("express");
 const app = express();
-const server = require("http").Server(app);
+const https = require("https");
+const fs = require("fs");
+// const server = require("http").Server(app);
+
+const serverOptions = {
+    key: fs.readFileSync("localhost+2-key.pem"),
+    cert: fs.readFileSync("localhost+2.pem")
+};
+
+const server = https.createServer(serverOptions, app);
 
 app.set("view engine", "ejs");
 
@@ -43,5 +52,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3030;
 server.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`Server running on https://0.0.0.0:${PORT}`);
 });

@@ -102,7 +102,7 @@ navigator.mediaDevices
         });
 
         myVideoStream = stream;
-        addVideoStream(wrapVideoStream(myVideo, userName, stream, userId));
+        addVideoStream(wrapVideoStream(myVideo, "Me", stream, userId));
 
         peer.on("call", (call) => {
             console.log('someone call me', call);

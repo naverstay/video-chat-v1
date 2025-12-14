@@ -10,6 +10,9 @@ An article I wrote which explains how I build this: https://bit.ly/3wh0gyR
 
 This app is build using NodeJS, Socket.io, and Peerjs(WebRTC)
 
+mkcert -install
+localhost 127.0.0.1 ::1
+
 ## How to run the project?
 
 1. Clone this repository in your local system.

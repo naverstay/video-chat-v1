@@ -1,12 +1,13 @@
 const express = require("express");
 const app = express();
 const https = require("https");
+const path = require("path");
 const fs = require("fs");
 // const server = require("http").Server(app);
 
 const serverOptions = {
-    key: fs.readFileSync("localhost+2-key.pem"),
-    cert: fs.readFileSync("localhost+2.pem")
+    key: fs.readFileSync(path.join(__dirname, "cert/localhost+2-key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "cert/localhost+2.pem"))
 };
 
 const server = https.createServer(serverOptions, app);
